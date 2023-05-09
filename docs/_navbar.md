@@ -6,6 +6,5 @@
   
     * [快速开始](zh-cn/cover.md)
     * [测试](java/线程池/SpringBoot自定义线程池.md)
-    * [测试](java/线程池/SpringBoot自定义线程池.md)
     
 
