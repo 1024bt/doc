@@ -4,11 +4,14 @@
 # 检查并创建目录
 echo "检查并创建所需的目录..."
 mkdir -p /mydata/nginx/conf.d
+mkdir -p /mydata/nginx/html
 mkdir -p /mydata/redis/conf
 mkdir -p /mydata/redis/data
 mkdir -p /mydata/mysql/conf
 mkdir -p /mydata/mysql/data
 mkdir -p /mydata/java
+mkdir -p /mydata/uploadPath #文件上传地址
+mkdir -p /mydata/backupPath #数据库备份文件地址
 echo "目录创建完成！"
 
 # 获取当前机器的IP地址
@@ -36,7 +39,7 @@ echo "Nginx反向代理配置文件创建完成！"
 
 # 安装Nginx并将80端口映射到宿主机，并挂载Nginx配置文件目录
 echo "正在安装Nginx并进行端口映射并挂载Nginx配置文件目录..."
-docker run -e TZ="Asia/Shanghai" -d --name nginx --restart always -p 80:80 -v /mydata/nginx/conf.d:/etc/nginx/conf.d -v /mydata/nginx/html/:/usr/share/nginx/html/ nginx
+docker run -e TZ="Asia/Shanghai" -d --name nginx --restart always -p 80:80 -p 443:443 -v /mydata/nginx/conf.d:/etc/nginx/conf.d -v /mydata/nginx/html/:/usr/share/nginx/html/ -v /mydata/nginx/cert/:/etc/nginx/cert/ nginx:latest
 echo "Nginx安装完成！"
 
 # 重启Nginx容器以应用配置更改
@@ -58,7 +61,7 @@ echo "MySQL 5.7安装完成！"
 
 # 安装JDK 1.8并将8080端口映射到宿主机
 echo "正在安装JDK 1.8并进行端口映射和运行项目..."
-docker run -e TZ="Asia/Shanghai" -d --name jdk8 --restart always -p 8080:8080 -v /mydata/java:/app openjdk:8 sh -c "mkdir -p /app/logs && java -jar /app/test-0.0.1-SNAPSHOT.jar >> /app/logs/application.log"
+docker run -e TZ="Asia/Shanghai" -d --name bhq --restart always -p 8780:8780 -v /mydata/java:/app -v /mydata/uploadPath:/mydata/uploadPath openjdk:8 sh -c "mkdir -p /app/logs/bhq && java -jar /app/bhq-1.0.jar --spring.profiles.active=zhengshi"
 echo "JDK 1.8安装完成,项目运行成功！"
 
 echo "所有组件安装完成！"

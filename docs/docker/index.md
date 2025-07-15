@@ -104,7 +104,7 @@ sudo docker pull mysql:5.7
 sudo docker run -p 3306:3306 --name mysql \
 -v /mydata/mysql/log:/var/log/mysql \
 -v /mydata/mysql/data:/var/lib/mysql \
--v /mydata/mysql/conf:/etc/mysql \
+-v /mydata/mysql/conf:/etc/mysql/conf.d \
 -e MYSQL_ROOT_PASSWORD=root \
 -d mysql:5.7
 ```
@@ -116,6 +116,8 @@ sudo docker run -p 3306:3306 --name mysql \
 
 - -v /mydata/mysql/log:/var/log/mysql：将配置文件挂载到主机/mydata/..
 - -e MYSQL_ROOT_PASSWORD=root：初始化root用户的密码为root
+- -d 以后台方式运行
+- mysql:5.7 使用这个镜像启动容器
 
 查看docker启动的容器:
 
