@@ -18,7 +18,8 @@
 
 #### 添加防火墙规则
 ```shell
-firewall-cmd --permanent --zone=public --add-port=端口/tcp
+firewall-cmd --list-ports #查看已经开放的端口
+firewall-cmd --permanent --zone=public --add-port=端口/tcp #开放端口
 firewall-cmd --reload
 ```
 
@@ -47,3 +48,14 @@ netstat -tunlp | grep 端口号
 
 ##### 查看占用
 	htop 按q退出
+
+
+
+##### 查看占用
+
+```shell
+grep -C 10 '通用异常' spring.log #查询spring.log文件中出现的'通用异常' 显示上下10行
+
+grep -n -C 10 --color=auto '通用异常' spring.log  # 带行号和高亮
+```
+

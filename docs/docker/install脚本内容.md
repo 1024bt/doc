@@ -37,6 +37,9 @@ server {
 EOF'
 echo "Nginx反向代理配置文件创建完成！"
 
+echo "创建docker网络" # 连接时需要直接使用容器名称,比如连接mysql容器直接使用mysql,而不是具体ip
+docker network create my-network
+
 # 安装Nginx并将80端口映射到宿主机，并挂载Nginx配置文件目录
 echo "正在安装Nginx并进行端口映射并挂载Nginx配置文件目录..."
 docker run -e TZ="Asia/Shanghai" -d --name nginx --restart always -p 80:80 -p 443:443 -v /mydata/nginx/conf.d:/etc/nginx/conf.d -v /mydata/nginx/html/:/usr/share/nginx/html/ -v /mydata/nginx/cert/:/etc/nginx/cert/ nginx:latest
@@ -49,19 +52,19 @@ echo "Nginx重启完成！"
 
 # 安装Redis并启用AOF持久化并将6379端口映射到宿主机
 echo "正在安装Redis并启用AOF持久化并进行端口映射..."
-docker run -d -e TZ="Asia/Shanghai" --name redis --restart always -v /mydata/redis/data:/data -v /mydata/redis/conf:/usr/local/etc/redis -p 6379:6379 redis:6.2.8 redis-server --appendonly yes
+docker run -d -e TZ="Asia/Shanghai" --name redis --network my-network --restart always -v /mydata/redis/data:/data -v /mydata/redis/conf:/usr/local/etc/redis -p 6379:6379 redis:6.2.8 redis-server --appendonly yes
 echo "Redis安装完成！"
 
 # 安装MySQL 5.7并挂载数据存储目录并进行端口映射，并挂载MySQL配置文件目录
 echo "正在安装MySQL 5.7并挂载数据存储目录并进行端口映射并挂载MySQL配置文件目录..."
-docker run -e TZ="Asia/Shanghai" -d --name mysql --restart always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/conf:/etc/mysql/conf.d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=Bast.2023 mysql:5.7
+docker run -e TZ="Asia/Shanghai" -d --name mysql --network my-network --restart always -v /mydata/mysql/data:/var/lib/mysql -v /mydata/mysql/conf:/etc/mysql/conf.d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=Bast.2023 mysql:5.7
 # MYSQL_ROOT_PASSWORD=Bast.2023 设置数据库root密码
 echo "MySQL 5.7安装完成！"
 
 
 # 安装JDK 1.8并将8080端口映射到宿主机
 echo "正在安装JDK 1.8并进行端口映射和运行项目..."
-docker run -e TZ="Asia/Shanghai" -d --name bhq --restart always -p 8780:8780 -v /mydata/java:/app -v /mydata/uploadPath:/mydata/uploadPath openjdk:8 sh -c "mkdir -p /app/logs/bhq && java -jar /app/bhq-1.0.jar --spring.profiles.active=zhengshi"
+docker run -e TZ="Asia/Shanghai" -d --name diankong --network my-network --restart always -p 8080:8080 -v /mydata/java:/app -v /mydata/uploadPath:/mydata/uploadPath openjdk:8 sh -c "mkdir -p /app/logs/diankong && java -jar /app/diankong-1.0.jar --spring.profiles.active=zhengshi"
 echo "JDK 1.8安装完成,项目运行成功！"
 
 echo "所有组件安装完成！"
